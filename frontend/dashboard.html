@@ -8,13 +8,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260428-8">
 </head>
 <body>
   <div class="page-shell">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-mark">FA</div>
+        <div class="brand-mark">
+          <img src="/assets/download.png" alt="Forest AI logo">
+        </div>
         <div>
           <h1>Forest AI Platform</h1>
           <p id="forestName">Loading forest topology...</p>
@@ -67,8 +69,8 @@
               </div>
               <div class="legend-row"><span>Hotspot grid</span><span class="dot hotspot"></span></div>
               <div class="legend-row"><span>Drone completed</span><span class="dot completed"></span></div>
-              <!-- <div class="legend-row"><span>Drone scanning</span><span class="dot scanning"></span></div> -->
-              <div class="legend-row"><span>Orange circle marker</span><span class="badge orange">Medium risk or warning alert</span></div>
+              <div class="legend-row"><span>Drone scanning</span><span class="dot scanning"></span></div>
+              <div class="legend-row"><span>Orange circle marker</span><span class="badge orange">Sensors triggers medium risk alert</span></div>
             </div>
           </section>
           <section class="panel">
@@ -80,7 +82,7 @@
     </main>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script src="/assets/js/common.js"></script>
-  <script src="/assets/js/dashboard.js"></script>
+  <script src="/assets/js/common.js?v=20260428-8"></script>
+  <script src="/assets/js/dashboard.js?v=20260428-8"></script>
 </body>
 </html>

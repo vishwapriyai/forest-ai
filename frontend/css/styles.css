@@ -77,8 +77,17 @@ a {
   border-radius: 14px;
   display: grid;
   place-items: center;
-  background: linear-gradient(145deg, #8cbf44, #2f7a50);
+  background: rgba(255, 255, 255, 0.96);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  padding: 4px;
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .brand h1 {
