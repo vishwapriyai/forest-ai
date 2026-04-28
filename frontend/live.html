@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forest AI Platform Live Ops</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">FA</div>
+        <div>
+          <h1>Forest AI Live Command</h1>
+          <p>Drone comparison, sensor intelligence, and real-time alerts</p>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a class="active" href="/live">Live</a>
+        <a href="/simulate-page">Plug &amp; Play</a>
+      </nav>
+      <div class="status-strip">
+        <div class="stat-pill"><span class="label">Mode</span><span class="value" id="liveMode">-</span></div>
+        <!-- <div class="stat-pill"><span class="label">Risk</span><span class="value" id="liveRisk">-</span></div> -->
+        <div class="stat-pill"><span class="label">Alerts</span><span class="value" id="liveAlerts">-</span></div>
+      </div>
+    </header>
+    <main class="content">
+      <div class="panel" style="margin-bottom:18px">
+        <span class="section-label">Live Feed</span>
+        <div class="field-note" id="liveRefreshNote">Live feed refreshes every 1 minute for sensor and drone data.</div>
+        <div class="field-note" id="analysisModeNote">Sensor-only analysis is active by default.</div>
+      </div>
+      <div class="grid-layout">
+        <aside class="stack">
+          <section class="panel">
+            <span class="section-label">Zone Selector<span class="tip" data-tip="Choose a zone to filter the live command view, alerts, and focused drone or sensor data.">i</span></span>
+            <select id="zoneSelector"></select>
+            <div class="toolbar" style="margin-top:14px">
+              <button id="launchDrone">Launch Drone</button>
+              <button id="recallDrone" class="secondary">Recall Drone</button>
+            </div>
+            <div class="list">
+              <div class="list-item"><strong>Focus Task</strong><div class="small" id="droneTask">-</div></div>
+              <div class="list-item"><strong>Grid</strong><div class="small" id="droneGrid">-</div></div>
+              <div class="list-item"><strong>Scheduled</strong><div class="small" id="droneSchedule">-</div></div>
+              <div class="list-item"><strong>Change</strong><div class="small" id="droneChange">-</div></div>
+              <div class="list-item"><strong>Cluster Health</strong><div class="small" id="clusterHealth">-</div></div>
+              <div class="list-item"><strong>Reliability</strong><div class="small" id="clusterReliability">-</div></div>
+            </div>
+          </section>
+          <!-- <section class="panel">
+            <span class="section-label">Zone Alerts<span class="tip" data-tip="These are the highest-priority detections in the selected zone. The source tells you which sensor channel or drone image contributed.">i</span></span>
+            <div class="list" id="zoneAlerts"></div>
+          </section> -->
+        </aside>
+        <section class="stack">
+          <section class="panel live-equal-panel">
+            <span class="section-label">Drone Comparison<span class="tip" data-tip="Yesterday and today images come from the same mapped grid. The change percent estimates canopy or ground disturbance between the two scans.">i</span></span>
+            <div class="field-note" id="comparisonLabel">Waiting for drone image pair...</div>
+            <div id="droneRiskBanner" class="drone-risk-banner" style="display:none"></div>
+            <div class="comparison-grid live-comparison-grid">
+              <!-- <article class="image-card">
+                <header><span>Yesterday</span>
+                  <span id="liveScore">-</span> 
+                </header>
+                <img id="yesterdayImage" alt="Yesterday scan">
+              </article> -->
+
+              <article class="image-card">
+                <header><span>Yesterday</span></header>
+                <div class="image-wrapper">
+                  <img id="yesterdayImage" alt="Yesterday scan">
+                  <div class="image-placeholder" id="yesterdayPlaceholder">
+                    Awaiting drone launch...
+                  </div>
+                </div>
+              </article>
+              <!-- <article class="image-card">
+                <header><span>Today</span>
+                 <span id="liveSensors">-</span> 
+                </header>
+                <img id="todayImage" alt="Today scan">
+              </article> -->
+              <article class="image-card">
+                <header><span>Today</span></header>
+              <div class="image-wrapper">
+                <img id="todayImage">
+                <div class="image-placeholder" id="todayPlaceholder">
+                  Awaiting drone launch...
+                </div>
+              </div>
+            </article>
+            </div>
+          </section>
+          <section class="panel live-equal-panel">
+            <span class="section-label">Sensor Table<span class="tip" data-tip="Each row is one cluster grid. Values are shown for temperature, motion, smoke, and sound, along with the row risk based on that grid's live sensor readings.">i</span></span>
+            <div class="field-note" id="sensorThresholdNote">Loading thresholds...</div>
+            <div class="toolbar" style="margin-top:12px; margin-bottom:12px">
+              <select id="sensorRiskFilter">
+                <option value="ALL">All Risks</option>
+                <option value="HIGH RISK">High Risk</option>
+                <option value="MEDIUM RISK">Medium Risk</option>
+                <option value="LOW RISK">Low Risk</option>
+              </select>
+            </div>
+            <div class="sensor-table-panel live-sensor-cards" id="sensorCards"></div>
+          </section>
+          <!-- <section class="panel" style="height:260px"> -->
+            <!-- <span class="section-label">Zone Map</span>
+            <div id="liveMiniMap"></div> -->
+          </section>
+        </section>
+        <aside class="stack">
+          <section class="panel">
+            <span class="section-label">Ops Summary</span>
+            <div class="info-grid">
+              <div class="info-card"><span>Drones</span><span class="value" id="liveDrones">-</span></div>
+              <div class="info-card"><span>Sensors</span><span class="value" id="liveSensorsCopy">-</span></div>
+            </div>
+          </section>
+          <!-- <section class="panel">
+            <span class="section-label">Marker Legend</span>
+            <div class="legend">
+              <div class="legend-row"><span>Green circle</span><span class="badge green">Low risk / healthy reading</span></div>
+              <div class="legend-row"><span>Orange circle</span><span class="badge orange">Medium risk / warning</span></div>
+              <div class="legend-row"><span>Blue circle</span><span class="badge blue">Drone completed scan</span></div>
+              <div class="legend-row"><span>Red circle</span><span class="badge red">High risk / hotspot alert</span></div>
+            </div>
+            <p class="field-note">On the live map, colored circles mainly represent alert severity. In the broader system, blue is also used for drone scan completion.</p>
+          </section> -->
+          <section class="panel">
+            <span class="section-label">Alerts Feed<span class="tip" data-tip="This feed lists recent alerts with zone, grid, source label, and final risk after drone plus sensor fusion.">i</span></span>
+            <div class="list" id="alertsFeed"></div>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="/assets/js/common.js"></script>
+  <script src="/assets/js/live.js?v=20260428-7"></script>
+</body>
+</html>

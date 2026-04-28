@@ -1,0 +1,21 @@
+{
+  "forest_name": "Mudumalai Forest Reserve",
+  "grid_size_km": 3,
+  "zone_count": 6,
+  "forest_bounds": {
+    "lat_min": 11.3,
+    "lat_max": 11.84,
+    "lon_min": 76.6,
+    "lon_max": 77.28
+  },
+  "thresholds": {
+    "temperature": 40,
+    "smoke": 70,
+    "sound": 80,
+    "motion": 1,
+    "drone_medium_change": 0.05,
+    "drone_high_change": 0.15,
+    "high_risk_score": 7,
+    "medium_risk_score": 4
+  }
+}

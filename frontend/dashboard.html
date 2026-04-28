@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forest AI Platform Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">FA</div>
+        <div>
+          <h1>Forest AI Platform</h1>
+          <p id="forestName">Loading forest topology...</p>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a class="active" href="/dashboard">Dashboard</a>
+        <a href="/live">Live</a>
+        <a href="/simulate-page">Plug &amp; Play</a>
+      </nav>
+      <div class="status-strip">
+        <div class="stat-pill"><span class="label">Grids</span><span class="value" id="gridCount">-</span></div>
+        <div class="stat-pill"><span class="label">Zones</span><span class="value" id="zoneCount">-</span></div>
+        <div class="stat-pill"><span class="label">Hotspots</span><span class="value" id="hotspotCount">-</span></div>
+      </div>
+    </header>
+    <main class="content">
+      <div class="grid-layout">
+        <aside class="stack">
+          <section class="panel">
+            <span class="section-label">Network Summary</span>
+            <div class="info-grid">
+              <div class="info-card"><span>Sensors</span><span class="value" id="sensorCount">-</span></div>
+              <div class="info-card"><span>Drones</span><span class="value" id="droneCount">-</span></div>
+            </div>
+            <p class="map-note">Hotspot grids are configured for daily scans and 1 km sensor placement. Normal grids stay on 5-day patrol and 5 km sensor spacing.</p>
+          </section>
+          <section class="panel">
+            <span class="section-label">Zone Directory</span>
+            <div class="list" id="zoneList"></div>
+          </section>
+        </aside>
+        <section class="panel hero-map">
+          <div id="dashboardMap"></div>
+        </section>
+        <aside class="stack">
+          <section class="panel">
+            <span class="section-label">Map Legend</span>
+            <div class="legend">
+              <div class="legend-row">
+                <span>Zone colors</span>
+                <span style="display:flex;gap:6px">
+                  <span class="dot zone-1"></span>
+                  <span class="dot zone-2"></span>
+                  <span class="dot zone-3"></span>
+                  <span class="dot zone-4"></span>
+                  <span class="dot zone-5"></span>
+                  <span class="dot zone-6"></span>
+                </span>
+              </div>
+              <div class="legend-row"><span>Hotspot grid</span><span class="dot hotspot"></span></div>
+              <div class="legend-row"><span>Drone completed</span><span class="dot completed"></span></div>
+              <!-- <div class="legend-row"><span>Drone scanning</span><span class="dot scanning"></span></div> -->
+              <div class="legend-row"><span>Orange circle marker</span><span class="badge orange">Medium risk or warning alert</span></div>
+            </div>
+          </section>
+          <section class="panel">
+            <span class="section-label">Hotspot Queue</span>
+            <div class="list" id="hotspotList"></div>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="/assets/js/common.js"></script>
+  <script src="/assets/js/dashboard.js"></script>
+</body>
+</html>

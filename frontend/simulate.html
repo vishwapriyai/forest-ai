@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forest AI Plug and Play</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">FA</div>
+        <div>
+          <h1>Forest AI Plug &amp; Play</h1>
+          <p>Simulate sensor drift, drone change, and hotspot weight before field rollout</p>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/live">Live</a>
+        <a class="active" href="/simulate-page">Plug &amp; Play</a>
+      </nav>
+
+  
+
+    </header>
+    <main class="content">
+      <div class="grid-layout">
+        <section class="panel" style="grid-column: span 2">
+          <span class="section-label">Editable Inputs</span>
+          <form id="simulateForm" class="stack">
+            <div class="two-column-form">
+              <label>Grid ID<input id="simulateGrid" value="G-0010"></label>
+              <label>Zone<select id="simulateZone"></select><div class="field-note" id="gridLookupNote">Zone will auto-map from grid ID.</div></label>
+              <label>Reliability Score<input id="simulateReliability" type="number" min="0" max="1" step="0.05" value="0.9"></label>
+              <label><span id="droneChangeLabel">Drone Change %</span><input id="simulateDroneChange" type="number" step="0.1" value="8"></label>
+              <label><span id="temperatureLabel">Temperature</span><input id="simulateTemperature" type="number" step="0.1" value="42"></label>
+              <label><span id="smokeLabel">Smoke</span><input id="simulateSmoke" type="number" step="0.1" value="74"></label>
+              <label><span id="soundLabel">Sound</span><input id="simulateSound" type="number" step="0.1" value="88"></label>
+              <label><span id="motionLabel">Motion</span><input id="simulateMotion" type="number" step="1" value="1"></label>
+              <label><span id="solarLabel">Solar Health</span><input id="simulateSolar" type="number" step="0.1" value="61"></label>
+              <label style="display:flex;align-items:center;gap:10px;padding-top:28px"><input id="simulateHotspot" type="checkbox" checked style="width:auto">Hotspot grid</label>
+            </div>
+            <div class="toolbar">
+              <button type="submit">Run Simulation</button>
+            </div>
+            <section class="upload-card">
+              <span class="section-label">Drone Image Upload</span>
+              <div class="two-column-form">
+                <label>Yesterday Drone Image<input id="uploadYesterday" type="file" accept="image/*"></label>
+                <label>Today Drone Image<input id="uploadToday" type="file" accept="image/*"></label>
+              </div>
+              <p class="field-note">Upload a yesterday/today drone pair to compute image change automatically and include it in the risk simulation.</p>
+              <div class="toolbar">
+                <button id="simulateUploadButton">Run With Uploaded Images</button>
+              </div>
+            </section>
+          </form>
+        </section>
+        <aside class="stack">
+          <section class="panel result-panel">
+            <span class="section-label">Risk Output</span>
+            <div class="risk-display">
+              <div>
+                <div class="small">Projected risk</div>
+                <h2 id="simulationRisk">-</h2>
+              </div>
+              <div>
+                <div class="small">Score</div>
+                <h2 id="simulationScore">-</h2>
+                <div class="small" id="riskClassificationGuide">Risk score guide will load here.</div>
+              </div>
+              <div>
+                <div class="small">Image change</div>
+                <h2 id="computedDroneChange">-</h2>
+              </div>
+            </div>
+          </section>
+          <section class="panel">
+            <span class="section-label">Triggered Sources</span>
+            <div class="toolbar" id="triggeredList"></div>
+          </section>
+          <section class="panel">
+          <span class="section-label">Explanation</span>
+          <p id="simulationExplanation" class="small">Run a scenario to inspect how the upgraded risk engine responds to different sensor and drone conditions.</p>
+          </section>
+        </aside>
+        <!-- <aside class="panel">
+          <span class="section-label">Explanation</span>
+          <p id="simulationExplanation" class="small">Run a scenario to inspect how the upgraded risk engine responds to different sensor and drone conditions.</p>
+        </aside> -->
+      </div>
+    </main>
+  </div>
+  <script src="/assets/js/common.js"></script>
+  <script src="/assets/js/simulate.js"></script>
+</body>
+</html>
