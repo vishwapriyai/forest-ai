@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest AI Sentinel Platform - Login</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1b3a24 0%, #0d1f13 100%), url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2074') no-repeat center center/cover;
+            background-blend-mode: multiply;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: rgba(13, 31, 19, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px 50px;
+            width: 350px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #fff;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 24px;
+            letter-spacing: 1px;
+            color: #4ade80;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.3s, background 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #4ade80;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 15px;
+            min-height: 18px;
+            font-weight: 500;
+        }
+
+        .credential-hints {
+            margin-top: 30px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: left;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .credential-hints p { margin: 5px 0; }
+        .credential-hints code { background: rgba(255, 255, 255, 0.1); padding: 2px 5px; border-radius: 4px; color: #4ade80; }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>Forest AI Login</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter username" required autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter password" required>
+            </div>
+            <button type="submit">Sign In</button>
+            <div id="errorMessage" class="error-message"></div>
+        </form>
+
+        <div class="credential-hints">
+            <p><strong>Credentials:</strong></p>
+            <p>User: <code>forestadmin</code> / Pass: <code>admin</code></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+
+            if (user === 'forestadmin' && pass === 'admin') {
+                errorDiv.textContent = "";
+                const isStatic = window.location.hostname.includes("github.io") || window.location.protocol === "file:";
+                window.location.href = isStatic ? "dashboard.html" : "/dashboard";
+            } else {
+                errorDiv.textContent = "Invalid username or password.";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forest AI Platform Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260430-3">
+</head>
+
+<body>
+  <div class="page-shell">
+    <header id="topbar-view-dashboard" class="topbar view-topbar" style="display: flex;">
+      <div class="brand">
+        <div class="brand-mark">
+          <img src="/assets/download.png" alt="Forest AI logo">
+        </div>
+        <div>
+          <h1>Forest AI Platform</h1>
+          <p id="forestName">Loading forest topology...</p>
+        </div>
+      </div>
+      <div class="status-strip">
+        <div class="stat-pill green">
+          <i class="fa-solid fa-table-cells"></i>
+          <div><span class="label">Grids</span><span class="value" id="gridCount">-</span></div>
+        </div>
+        <div class="stat-pill blue">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <div><span class="label">Zones</span><span class="value" id="zoneCount">-</span></div>
+        </div>
+        <div class="stat-pill red">
+          <i class="fa-solid fa-fire-flame-curved"></i>
+          <div><span class="label">Hotspots</span><span class="value" id="hotspotCount">-</span></div>
+        </div>
+      </div>
+    </header>
+    <header id="topbar-view-live" class="topbar view-topbar" style="display: none;">
+      <div class="brand">
+        <div class="brand-mark">
+          <img src="/assets/download.png" alt="Forest AI logo">
+        </div>
+        <div>
+          <h1>Forest AI Live Command</h1>
+          <p>Drone comparison, sensor intelligence, and real-time alerts</p>
+        </div>
+      </div>
+      <div class="status-strip">
+        <div class="stat-pill"><span class="label">Mode</span><span class="value" id="liveMode">-</span></div>
+        <!-- <div class="stat-pill"><span class="label">Risk</span><span class="value" id="liveRisk">-</span></div> -->
+        <div class="stat-pill"><span class="label">Alerts</span><span class="value" id="liveAlerts">-</span></div>
+      </div>
+    </header>
+    <header id="topbar-view-simulate" class="topbar view-topbar" style="display: none;">
+      <div class="brand">
+        <div class="brand-mark">
+          <img src="/assets/download.png" alt="Forest AI logo">
+        </div>
+        <div>
+          <h1>Forest AI Plug &amp; Play</h1>
+          <p>Simulate sensor drift, drone change, and hotspot weight before field rollout</p>
+        </div>
+      </div>
+    </header>
+    <div class="main-body">
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <a class="active" href="/dashboard"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+          <a href="/live"><i class="fa-solid fa-satellite-dish"></i><span>Live</span></a>
+          <a href="/simulate-page"><i class="fa-solid fa-gamepad"></i><span>Plug &amp; Play</span></a>
+        </nav>
+      </aside>
+      <div class="views-container"
+        style="flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;">
+
+        <div id="view-dashboard" class="view-section"
+          style="display: flex; flex-direction: column; height: 100%; overflow: hidden; width: 100%;">
+          <main class="content">
+            <div class="grid-layout">
+              <aside class="stack">
+                <section class="panel">
+                  <span class="section-label">Network Summary</span>
+                  <div class="info-grid">
+                    <div class="info-card green">
+                      <i class="fa-solid fa-microchip"></i>
+                      <span>SENSORS</span>
+                      <span class="value" id="sensorCount">-</span>
+                    </div>
+                    <div class="info-card blue">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+                        style="margin-bottom:6px; color:var(--blue)">
+                        <path
+                          d="M21,16.5C21,16.88 20.73,17.21 20.37,17.44C19.82,17.77 18.82,18 17.5,18C16.18,18 15.18,17.77 14.63,17.44C14.27,17.21 14,16.88 14,16.5C14,16.12 14.27,15.79 14.63,15.56C14.85,15.43 15.13,15.33 15.45,15.24L14.04,13.82C13.4,14.07 12.72,14.2 12,14.2C11.28,14.2 10.6,14.07 9.96,13.82L8.55,15.24C8.87,15.33 9.15,15.43 9.37,15.56C9.73,15.79 10,16.12 10,16.5C10,16.88 9.73,17.21 9.37,17.44C8.82,17.77 7.82,18 6.5,18C5.18,18 4.18,17.77 3.63,17.44C3.27,17.21 3,16.88 3,16.5C3,16.12 3.27,15.79 3.63,15.56C4.18,15.23 5.18,15 6.5,15C7.05,15 7.55,15.04 8,15.12L9.41,13.71C9.15,13.5 8.91,13.27 8.7,13L5.45,13.65C5.48,13.93 5.5,14.21 5.5,14.5C5.5,14.88 5.23,15.21 4.87,15.44C4.32,15.77 3.32,16 2,16C0.68,16 -0.32,15.77 -0.87,15.44C-1.23,15.21 -1.5,14.88 -1.5,14.5C-1.5,14.12 -1.23,13.79 -0.87,13.56C-0.32,13.23 0.68,13 2,13C2.55,13 3.05,13.04 3.5,13.12L6.75,12.47C6.6,12.16 6.5,11.84 6.5,11.5C6.5,11.16 6.6,10.84 6.75,10.53L3.5,9.88C3.05,9.96 2.55,10 2,10C0.68,10 -0.32,9.77 -0.87,9.44C-1.23,9.21 -1.5,8.88 -1.5,8.5C-1.5,8.12 -1.23,7.79 -0.87,7.56C-0.32,7.23 0.68,7 2,7C3.32,7 4.32,7.23 4.87,7.56C5.23,7.79 5.5,8.12 5.5,8.5C5.5,8.79 5.48,9.07 5.45,9.35L8.7,10C8.91,9.73 9.15,9.5 9.41,9.29L8,7.88C7.55,7.96 7.05,8 6.5,8C5.18,8 4.18,7.77 3.63,7.44C3.27,7.21 3,6.88 3,6.5C3,6.12 3.27,5.79 3.63,5.56C4.18,5.23 5.18,5 6.5,5C7.82,5 8.82,5.23 9.37,5.56C9.73,5.79 10,6.12 10,6.5C10,6.88 9.73,7.21 9.37,7.44C9.15,7.57 8.87,7.67 8.55,7.76L9.96,9.18C10.6,8.93 11.28,8.8 12,8.8C12.72,8.8 13.4,8.93 14.04,9.18L15.45,7.76C15.13,7.67 14.85,7.57 14.63,7.44C14.27,7.21 14,6.88 14,6.5C14,6.12 14.27,5.79 14.63,5.56C15.18,5.23 16.18,5 17.5,5C18.82,5 19.82,5.23 20.37,5.56C20.73,5.79 21,6.12 21,6.5C21,6.88 20.73,7.21 20.37,7.44C19.82,7.77 18.82,8 17.5,8C16.95,8 16.45,7.96 16,7.88L14.59,9.29C14.85,9.5 15.09,9.73 15.3,10L18.55,9.35C18.52,9.07 18.5,8.79 18.5,8.5C18.5,8.12 18.77,7.79 19.13,7.56C19.68,7.23 20.68,7 22,7C23.32,7 24.32,7.23 24.87,7.56C25.23,7.79 25.5,8.12 25.5,8.5C25.5,8.88 25.23,9.21 24.87,9.44C24.32,9.77 23.32,10 22,10C21.45,10 20.95,9.96 20.5,9.88L17.25,10.53C17.4,10.84 17.5,11.16 17.5,11.5C17.5,11.84 17.4,12.16 17.25,12.47L20.5,13.12C20.95,13.04 21.45,13 22,13C23.32,13 24.32,13.23 24.87,13.56C25.23,13.79 25.5,14.12 25.5,14.5C25.5,14.88 25.23,15.21 24.87,15.44C24.32,15.77 23.32,16 22,16C20.68,16 19.68,15.77 19.13,15.44C18.77,15.21 18.5,14.88 18.5,14.5C18.5,14.21 18.52,13.93 18.55,13.65L15.3,13C15.09,13.27 14.85,13.5 14.59,13.71L16,15.12C16.45,15.04 16.95,15 17.5,15C18.82,15 19.82,15.23 20.37,15.56C20.73,15.79 21,16.12 21,16.5Z" />
+                      </svg>
+                      <span>DRONES</span>
+                      <span class="value" id="droneCount">-</span>
+                    </div>
+
+                  </div>
+                  <p class="map-note">Hotspot grids are configured for daily scans and 1 km sensor placement. Normal
+                    grids
+                    stay on 5-day patrol and 5 km sensor spacing.</p>
+                </section>
+                <section class="panel">
+                  <span class="section-label">Zone Directory</span>
+                  <div class="list" id="zoneList"></div>
+                </section>
+              </aside>
+              <section class="panel hero-map">
+                <div id="dashboardMap"></div>
+              </section>
+              <aside class="stack">
+                <section class="panel">
+                  <span class="section-label">Map Legend</span>
+                  <div class="legend">
+                    <div class="legend-row">
+                      <span>Zone colors</span>
+                      <span style="display:flex;gap:6px">
+                        <span class="dot zone-1"></span>
+                        <span class="dot zone-2"></span>
+                        <span class="dot zone-3"></span>
+                        <span class="dot zone-4"></span>
+                        <span class="dot zone-5"></span>
+                        <span class="dot zone-6"></span>
+                      </span>
+                    </div>
+                    <div class="legend-row"><span>Hotspot grid</span><span class="dot hotspot"></span></div>
+                    <div class="legend-row"><span>Drone completed</span><span class="dot completed"></span></div>
+                    <div class="legend-row"><span>Drone scanning</span><span class="dot scanning"></span></div>
+                    <div class="legend-row"><span>Orange circle marker</span><span class="badge orange">Sensors triggers
+                        medium risk alert</span></div>
+                  </div>
+                </section>
+                <section class="panel">
+                  <span class="section-label">Hotspot Queue <span class="small"
+                      style="text-transform:none; margin-left:auto; font-weight:400; opacity:0.8">Density:
+                      1km</span></span>
+                  <div class="list" id="hotspotList"></div>
+                </section>
+              </aside>
+            </div>
+          </main>
+        </div>
+
+        <div id="view-live" class="view-section"
+          style="display: none; flex-direction: column; height: 100%; overflow: hidden; width: 100%;">
+          <main class="content">
+
+            <div class="grid-layout">
+              <aside class="stack">
+                <section class="panel">
+                  <span class="section-label">Zone Selector<span class="tip"
+                      data-tip="Choose a zone to filter the live command view, alerts, and focused drone or sensor data.">i</span></span>
+                  <select id="zoneSelector"></select>
+                  <div class="toolbar" style="margin-top:14px; margin-bottom:14px;">
+                    <button id="launchDrone">Launch Drone</button>
+                    <button id="recallDrone" class="secondary">Recall Drone</button>
+                  </div>
+                  <div class="list">
+                    <div class="list-item"><strong>Focus Task</strong>
+                      <div class="small" id="droneTask">-</div>
+                    </div>
+                    <div class="list-item"><strong>Grid</strong>
+                      <div class="small" id="droneGrid">-</div>
+                    </div>
+                    <div class="list-item"><strong>Scheduled</strong>
+                      <div class="small" id="droneSchedule">-</div>
+                    </div>
+                    <div class="list-item"><strong>Change</strong>
+                      <div class="small" id="droneChange">-</div>
+                    </div>
+                    <div class="list-item"><strong>Cluster Health</strong>
+                      <div class="small" id="clusterHealth">-</div>
+                    </div>
+                  </div>
+                </section>
+                <!-- <section class="panel">
+            <span class="section-label">Zone Alerts<span class="tip" data-tip="These are the highest-priority detections in the selected zone. The source tells you which sensor channel or drone image contributed.">i</span></span>
+            <div class="list" id="zoneAlerts"></div>
+          </section> -->
+              </aside>
+              <section class="stack">
+                <section class="panel live-equal-panel">
+                  <div class="note-box">
+                    <span class="section-label">Live Feed</span>
+                    <div class="field-note" id="liveRefreshNote">Live feed refreshes every 1 minute for sensor and drone
+                      data.</div>
+                    <div class="field-note" id="analysisModeNote">Sensor-only analysis is active by default.</div>
+                  </div>
+                  <span class="section-label">Drone Comparison<span class="tip"
+                      data-tip="Yesterday and today images come from the same mapped grid. The change percent estimates canopy or ground disturbance between the two scans.">i</span></span>
+                  <div class="field-note" id="comparisonLabel">Waiting for drone image pair...</div>
+                  <div id="droneRiskBanner" class="drone-risk-banner" style="display:none"></div>
+                  <div class="comparison-grid live-comparison-grid">
+                    <article class="image-card">
+                      <header><span>Yesterday</span></header>
+                      <div class="image-wrapper">
+                        <img id="yesterdayImage" alt="Yesterday scan">
+                        <div class="image-placeholder" id="yesterdayPlaceholder">
+                          Awaiting drone launch...
+                        </div>
+                      </div>
+                    </article>
+                    <!-- <article class="image-card">
+                <header><span>Today</span>
+                 <span id="liveSensors">-</span> 
+                </header>
+                <img id="todayImage" alt="Today scan">
+              </article> -->
+                    <article class="image-card">
+                      <header><span>Today</span></header>
+                      <div class="image-wrapper">
+                        <img id="todayImage">
+                        <div class="image-placeholder" id="todayPlaceholder">
+                          Awaiting drone launch...
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </section>
+                <section class="panel live-equal-panel">
+                  <span class="section-label">Sensor Table<span class="tip"
+                      data-tip="Each row is one cluster grid. Values are shown for temperature, motion, smoke, and sound, along with the row risk based on that grid's live sensor readings.">i</span></span>
+                  <div class="field-note" id="sensorThresholdNote">Loading thresholds...</div>
+                  <div class="toolbar" style="margin-top:12px; margin-bottom:12px">
+                    <select id="sensorRiskFilter">
+                      <option value="ALL">All Risks</option>
+                      <option value="HIGH RISK">High Risk</option>
+                      <option value="MEDIUM RISK">Medium Risk</option>
+                      <option value="LOW RISK">Low Risk</option>
+                    </select>
+                  </div>
+                  <div class="sensor-table-panel live-sensor-cards" id="sensorCards"></div>
+                </section>
+                <!-- <section class="panel" style="height:260px"> -->
+                <!-- <span class="section-label">Zone Map</span>
+            <div id="liveMiniMap"></div> -->
+              </section>
+              </section>
+              <aside class="stack">
+                <section class="panel">
+                  <span class="section-label">Ops Summary</span>
+                  <div class="info-grid">
+                    <div class="info-card"><span>Drones</span><span class="value" id="liveDrones">-</span></div>
+                    <div class="info-card"><span>Sensors</span><span class="value" id="liveSensorsCopy">-</span></div>
+                  </div>
+                </section>
+                <!-- <section class="panel">
+            <span class="section-label">Marker Legend</span>
+            <div class="legend">
+              <div class="legend-row"><span>Green circle</span><span class="badge green">Low risk / healthy reading</span></div>
+              <div class="legend-row"><span>Orange circle</span><span class="badge orange">Medium risk / warning</span></div>
+              <div class="legend-row"><span>Blue circle</span><span class="badge blue">Drone completed scan</span></div>
+              <div class="legend-row"><span>Red circle</span><span class="badge red">High risk / hotspot alert</span></div>
+            </div>
+            <p class="field-note">On the live map, colored circles mainly represent alert severity. In the broader system, blue is also used for drone scan completion.</p>
+          </section> -->
+                <section class="panel">
+                  <span class="section-label">Alerts Feed<span class="tip"
+                      data-tip="This feed lists recent alerts with zone, grid, source label, and final risk after drone plus sensor fusion.">i</span></span>
+                  <div class="list" id="alertsFeed"></div>
+                </section>
+              </aside>
+            </div>
+          </main>
+        </div>
+
+        <div id="view-simulate" class="view-section"
+          style="display: none; flex-direction: column; height: 100%; overflow: hidden; width: 100%;">
+          <main class="content">
+            <div class="grid-layout">
+              <section class="panel" style="grid-column: span 2">
+                <span class="section-label">Editable Inputs</span>
+                <form id="simulateForm" class="stack">
+                  <div class="two-column-form">
+                    <label>Grid ID<input id="simulateGrid" value="G-0010"></label>
+                    <label>Zone<select id="simulateZone"></select>
+                      <div class="field-note" id="gridLookupNote">Zone will auto-map from grid ID.</div>
+                    </label>
+                    <label><span id="droneChangeLabel">Drone Change %</span><input id="simulateDroneChange"
+                        type="number" step="0.1" value="8"></label>
+                    <label><span id="temperatureLabel">Temperature</span><input id="simulateTemperature" type="number"
+                        step="0.1" value="42"></label>
+                    <label><span id="smokeLabel">Smoke</span><input id="simulateSmoke" type="number" step="0.1"
+                        value="74"></label>
+                    <label><span id="soundLabel">Sound</span><input id="simulateSound" type="number" step="0.1"
+                        value="88"></label>
+                    <label><span id="motionLabel">Motion</span><input id="simulateMotion" type="number" step="1"
+                        value="1"></label>
+                    <label><span id="solarLabel">Solar Health</span><input id="simulateSolar" type="number" step="0.1"
+                        value="61"></label>
+                    <label style="display:flex;align-items:center;gap:10px;padding-top:6px"><input id="simulateHotspot"
+                        type="checkbox" checked style="width:auto">Hotspot grid</label>
+                  </div>
+                  <div class="toolbar">
+                    <button type="submit">Run Simulation</button>
+                  </div>
+                  <section class="upload-card">
+                    <span class="section-label">Drone Image Upload</span>
+                    <div class="two-column-form">
+                      <label>Yesterday Drone Image<input id="uploadYesterday" type="file" accept="image/*"></label>
+                      <label>Today Drone Image<input id="uploadToday" type="file" accept="image/*"></label>
+                    </div>
+                    <p class="field-note">Upload a yesterday/today drone pair to compute image change automatically and
+                      include it in the risk simulation.</p>
+                    <div class="toolbar">
+                      <button id="simulateUploadButton">Run With Uploaded Images</button>
+                    </div>
+                  </section>
+                </form>
+              </section>
+              <aside class="stack">
+                <section class="panel result-panel">
+                  <span class="section-label">Risk Output</span>
+                  <div class="risk-display">
+                    <div>
+                      <div class="small">Projected risk</div>
+                      <h2 id="simulationRisk">-</h2>
+                    </div>
+                    <div>
+                      <div class="small">Score</div>
+                      <h2 id="simulationScore">-</h2>
+                    </div>
+                    <div>
+                      <div class="small">Image change</div>
+                      <h2 id="computedDroneChange">-</h2>
+                    </div>
+                  </div>
+                  <div class="field-note" id="riskClassificationGuide"
+                    style="margin-top:20px; padding-top:14px; border-top:1px solid var(--glass-border)">Risk score guide
+                    will load here.</div>
+                </section>
+                <!-- <section class="panel">
+            <span class="section-label">Triggered Sources</span>
+            <div class="toolbar" id="triggeredList"></div>
+          </section> -->
+                <section class="panel">
+                  <span class="section-label">Explanation</span>
+                  <p id="simulationExplanation" class="small">Run a scenario to inspect how the upgraded risk engine
+                    responds to different sensor and drone conditions.</p>
+                </section>
+              </aside>
+              <!-- <aside class="panel">
+          <span class="section-label">Explanation</span>
+          <p id="simulationExplanation" class="small">Run a scenario to inspect how the upgraded risk engine responds to different sensor and drone conditions.</p>
+        </aside> -->
+            </div>
+          </main>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="/assets/js/common.js?v=20260430-5"></script>
+  <script src="/assets/js/dashboard.js?v=20260430-5"></script>
+  <script src="/assets/js/live.js?v=20260430-5"></script>
+  <script src="/assets/js/simulate.js?v=20260430-5"></script>
+
+  <script>
+    function showView(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => {
+        el.style.display = 'none';
+      });
+      document.querySelectorAll('.view-topbar').forEach(el => {
+        el.style.display = 'none';
+      });
+
+      const target = document.getElementById(viewId);
+      if (target) {
+        target.style.display = 'flex';
+      }
+
+      const targetTopbar = document.getElementById('topbar-' + viewId);
+      if (targetTopbar) {
+        targetTopbar.style.display = 'flex';
+      }
+
+      document.querySelectorAll('.sidebar-nav a').forEach(el => {
+        el.classList.remove('active');
+      });
+
+      const path = viewId === 'view-dashboard' ? '/dashboard' :
+        viewId === 'view-live' ? '/live' : '/simulate-page';
+
+      const activeLink = document.querySelector('.sidebar-nav a[href="' + path + '"]');
+      if (activeLink) activeLink.classList.add('active');
+
+      window.history.pushState({ view: viewId }, '', path);
+
+      // Trigger resize events for maps
+      window.dispatchEvent(new Event('resize'));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.sidebar-nav a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const href = link.getAttribute('href');
+          let viewId = 'view-dashboard';
+          if (href === '/live') viewId = 'view-live';
+          if (href === '/simulate-page') viewId = 'view-simulate';
+          showView(viewId);
+        });
+      });
+
+      const currentPath = window.location.pathname;
+      let viewId = 'view-dashboard';
+      if (currentPath === '/live') viewId = 'view-live';
+      if (currentPath === '/simulate-page') viewId = 'view-simulate';
+      showView(viewId);
+    });
+
+    window.addEventListener('popstate', (e) => {
+      if (e.state && e.state.view) {
+        showView(e.state.view);
+      } else {
+        showView('view-dashboard');
+      }
+    });
+  </script>
+
+</body>
+
+</html>

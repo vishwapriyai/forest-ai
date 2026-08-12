@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: forest-ai-live
+    env: docker
+    plan: free
+    autoDeploy: true
