@@ -2,6 +2,7 @@ let livePollTimer;
 let lastLiveCycleId = null;
 let latestSensorRows = [];
 let latestSensorThresholds = {};
+let staticDroneActive = false;
 
 function droneBannerVisualClass(riskLevel) {
   if (riskLevel === "HIGH RISK") return "drone-risk-high";
@@ -120,7 +121,8 @@ function pulseLiveChanges() {
 
 function renderDroneRiskBanner(imagePair, payload) {
   const banner = document.getElementById("droneRiskBanner");
-  if (!(payload.mode === "DRONE_ACTIVE" && imagePair && imagePair.yesterday && imagePair.today)) {
+  const isDroneMode = payload.mode && payload.mode.includes("DRONE");
+  if (!(isDroneMode && imagePair && imagePair.yesterday && imagePair.today)) {
     banner.style.display = "none";
     banner.innerHTML = "";
     return;
@@ -156,6 +158,13 @@ function renderDroneRiskBanner(imagePair, payload) {
 function renderLive(payload) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('loading-state'));
   if (!payload) return;
+
+  const isStatic = window.location.hostname.includes("github.io") || window.location.protocol === "file:";
+  if (isStatic) {
+    payload.mode = staticDroneActive ? "DRONE ACTIVE" : "SENSOR ACTIVE";
+    payload.analysis_source = staticDroneActive ? "drone-only image comparison" : "sensor-only analysis";
+  }
+
   const isNewCycle = payload.cycle_id != null && payload.cycle_id !== lastLiveCycleId;
   lastLiveCycleId = payload.cycle_id ?? lastLiveCycleId;
 
@@ -260,9 +269,16 @@ async function loadLive(zoneId = "") {
 }
 
 async function toggleDrone(state) {
-  await getJson(`/toggle-drone?state=${state}`, { method: "POST" });
-  const payload = await refreshLiveFeed(document.getElementById("zoneSelector").value);
-  renderLive(payload);
+  staticDroneActive = state;
+  const isStatic = window.location.hostname.includes("github.io") || window.location.protocol === "file:";
+  if (isStatic) {
+    const payload = await fetchLiveSnapshot(document.getElementById("zoneSelector").value);
+    renderLive(payload);
+  } else {
+    await getJson(`/toggle-drone?state=${state}`, { method: "POST" });
+    const payload = await refreshLiveFeed(document.getElementById("zoneSelector").value);
+    renderLive(payload);
+  }
 }
 
 function startLivePolling() {
