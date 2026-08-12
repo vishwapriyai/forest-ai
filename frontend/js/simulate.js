@@ -86,6 +86,26 @@ async function runSimulation() {
 
 async function runUploadSimulation() {
   syncZoneFromGrid();
+  const yesterday = document.getElementById("uploadYesterday").files[0];
+  const today = document.getElementById("uploadToday").files[0];
+  if (!yesterday || !today) {
+    setText("simulationExplanation", "Please upload both yesterday and today drone images.");
+    return;
+  }
+
+  const isStatic = window.location.hostname.includes("github.io") || window.location.protocol === "file:";
+  if (isStatic) {
+    const result = {
+      risk: "HIGH RISK",
+      score: 8.7,
+      triggered_sources: ["temp1", "sound1"],
+      explanation: "Image-upload change detection simulation resolved statically on GitHub Pages.",
+      drone_change_percent: 18.2
+    };
+    renderSimulationResult(result);
+    return;
+  }
+
   const formData = new FormData();
   formData.append("grid_id", document.getElementById("simulateGrid").value || "SIM-GRID");
   formData.append("zone_id", document.getElementById("simulateZone").value);
@@ -96,13 +116,6 @@ async function runUploadSimulation() {
   formData.append("sound", document.getElementById("simulateSound").value);
   formData.append("motion", document.getElementById("simulateMotion").value);
   formData.append("solar_health", document.getElementById("simulateSolar").value);
-
-  const yesterday = document.getElementById("uploadYesterday").files[0];
-  const today = document.getElementById("uploadToday").files[0];
-  if (!yesterday || !today) {
-    setText("simulationExplanation", "Please upload both yesterday and today drone images.");
-    return;
-  }
 
   formData.append("yesterday_image", yesterday);
   formData.append("today_image", today);

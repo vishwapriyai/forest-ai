@@ -15,15 +15,19 @@ function healthBadge(health) {
 
 async function getJson(path, options) {
   let url = `${API_BASE}${path}`;
+  let fetchOptions = { ...options };
 
   if (IS_STATIC) {
     const cleanPath = path.split("?")[0];
     if (cleanPath === "/dashboard-data") {
       url = "data/dashboard-data.json";
+      fetchOptions.method = "GET";
     } else if (cleanPath === "/simulation-metadata") {
       url = "data/simulation-metadata.json";
+      fetchOptions.method = "GET";
     } else if (cleanPath === "/live-data" || cleanPath === "/live-feed/status" || cleanPath === "/live-feed/refresh") {
       url = "data/live-data.json";
+      fetchOptions.method = "GET";
     } else if (cleanPath === "/simulate") {
       return {
         risk: "MEDIUM RISK",
@@ -37,7 +41,7 @@ async function getJson(path, options) {
     }
   }
 
-  const response = await fetch(url, options);
+  const response = await fetch(url, fetchOptions);
   if (!response.ok) {
     throw new Error(`Request failed for ${path}`);
   }
