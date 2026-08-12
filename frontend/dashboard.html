@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260430-3">
+  <link rel="stylesheet" href="css/styles.css?v=20260430-3">
 </head>
 
 <body>
@@ -18,7 +18,7 @@
     <header id="topbar-view-dashboard" class="topbar view-topbar" style="display: flex;">
       <div class="brand">
         <div class="brand-mark">
-          <img src="/assets/download.png" alt="Forest AI logo">
+          <img src="download.png" alt="Forest AI logo">
         </div>
         <div>
           <h1>Forest AI Platform</h1>
@@ -43,7 +43,7 @@
     <header id="topbar-view-live" class="topbar view-topbar" style="display: none;">
       <div class="brand">
         <div class="brand-mark">
-          <img src="/assets/download.png" alt="Forest AI logo">
+          <img src="download.png" alt="Forest AI logo">
         </div>
         <div>
           <h1>Forest AI Live Command</h1>
@@ -59,7 +59,7 @@
     <header id="topbar-view-simulate" class="topbar view-topbar" style="display: none;">
       <div class="brand">
         <div class="brand-mark">
-          <img src="/assets/download.png" alt="Forest AI logo">
+          <img src="download.png" alt="Forest AI logo">
         </div>
         <div>
           <h1>Forest AI Plug &amp; Play</h1>
@@ -357,10 +357,10 @@
     </div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script src="/assets/js/common.js?v=20260430-5"></script>
-  <script src="/assets/js/dashboard.js?v=20260430-5"></script>
-  <script src="/assets/js/live.js?v=20260430-5"></script>
-  <script src="/assets/js/simulate.js?v=20260430-5"></script>
+  <script src="js/common.js?v=20260430-5"></script>
+  <script src="js/dashboard.js?v=20260430-5"></script>
+  <script src="js/live.js?v=20260430-5"></script>
+  <script src="js/simulate.js?v=20260430-5"></script>
 
   <script>
     function showView(viewId) {
@@ -385,11 +385,16 @@
         el.classList.remove('active');
       });
 
-      const path = viewId === 'view-dashboard' ? '/dashboard' :
-        viewId === 'view-live' ? '/live' : '/simulate-page';
+      const isStatic = window.location.hostname.includes("github.io") || window.location.protocol === "file:";
+      const path = isStatic
+        ? (viewId === 'view-dashboard' ? '?view=dashboard' : viewId === 'view-live' ? '?view=live' : '?view=simulate')
+        : (viewId === 'view-dashboard' ? '/dashboard' : viewId === 'view-live' ? '/live' : '/simulate-page');
 
-      const activeLink = document.querySelector('.sidebar-nav a[href="' + path + '"]');
-      if (activeLink) activeLink.classList.add('active');
+      // Sync active link
+      const links = document.querySelectorAll('.sidebar-nav a');
+      if (viewId === 'view-dashboard' && links[0]) links[0].classList.add('active');
+      if (viewId === 'view-live' && links[1]) links[1].classList.add('active');
+      if (viewId === 'view-simulate' && links[2]) links[2].classList.add('active');
 
       window.history.pushState({ view: viewId }, '', path);
 
@@ -398,21 +403,27 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.sidebar-nav a').forEach(link => {
+      document.querySelectorAll('.sidebar-nav a').forEach((link, idx) => {
         link.addEventListener('click', (e) => {
           e.preventDefault();
-          const href = link.getAttribute('href');
           let viewId = 'view-dashboard';
-          if (href === '/live') viewId = 'view-live';
-          if (href === '/simulate-page') viewId = 'view-simulate';
+          if (idx === 1) viewId = 'view-live';
+          if (idx === 2) viewId = 'view-simulate';
           showView(viewId);
         });
       });
 
-      const currentPath = window.location.pathname;
+      const isStatic = window.location.hostname.includes("github.io") || window.location.protocol === "file:";
       let viewId = 'view-dashboard';
-      if (currentPath === '/live') viewId = 'view-live';
-      if (currentPath === '/simulate-page') viewId = 'view-simulate';
+      if (isStatic) {
+        const viewParam = new URLSearchParams(window.location.search).get('view');
+        if (viewParam === 'live') viewId = 'view-live';
+        if (viewParam === 'simulate') viewId = 'view-simulate';
+      } else {
+        const currentPath = window.location.pathname;
+        if (currentPath === '/live') viewId = 'view-live';
+        if (currentPath === '/simulate-page') viewId = 'view-simulate';
+      }
       showView(viewId);
     });
 
